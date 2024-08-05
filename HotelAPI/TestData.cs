@@ -4,7 +4,7 @@ public class TestData
 {
 	public static Room[] GetTestData()
 	{
-		Room[] rooms = { new Room(1, 2, 300.0)};
+		Room[] rooms = { new Room(1, 2, 300.0m)};
 		return rooms;
 	}
 }

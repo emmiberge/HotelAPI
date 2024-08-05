@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Microsoft.Azure.Functions.Worker.Extensions.Sql;
 using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.EntityFrameworkCore;
 
 
 
@@ -24,8 +25,14 @@ namespace HotelAPI
             log.LogInformation("C# HTTP trigger function processed a request.");
 
             // default room
-            Room TestRoom = new Room(1, 2, 300.00);
-            return new OkObjectResult(TestRoom);
+            Room TestRoom = new Room(1, 2, 300.00m);
+
+
+            var db = new RoomContext();
+            var rooms = await db.RoomsTestTable.ToListAsync();
+            return new OkObjectResult(rooms);
+            
+
         }
     }
 
