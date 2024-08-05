@@ -7,6 +7,10 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Microsoft.Azure.Functions.Worker.Extensions.Sql;
+using Microsoft.Azure.Functions.Worker.Http;
+
+
 
 namespace HotelAPI
 {
@@ -14,22 +18,23 @@ namespace HotelAPI
     {
         [FunctionName("TestFunction")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            string name = req.Query["name"];
-
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
-            name = name ?? data?.name;
-
-            string responseMessage = string.IsNullOrEmpty(name)
-                ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
-                : $"Hello, {name}. This HTTP triggered function executed successfully.";
-
-            return new OkObjectResult(responseMessage);
+            // default room
+            Room TestRoom = new Room(1, 2, 300.00);
+            return new OkObjectResult(TestRoom);
         }
+    }
+
+
+    // Return a default value for now
+    public static class OutputType
+    {
+        [SqlOutput("dbo.RoomsTestTable", connectionStringSetting: "SqlConnectionString")]
+        public static Room ExampleRoom { get; set; }
+        public static HttpResponseData HttpResponse { get; set; }
     }
 }
