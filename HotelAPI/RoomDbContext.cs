@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection.Metadata;
 using Microsoft.EntityFrameworkCore;
+using HotelAPI.Model;
 
 public class RoomDbContext : DbContext
 {
@@ -26,20 +27,4 @@ public class RoomDbContext : DbContext
 
 }
 
-public class Room
-{
-	public int Id { get; set; }
-	public int AmountOfBeds { get; set; }
-    public decimal PricePerNight { get; set; }
 
-    public Room()
-    {
-    }
-
-    public Room(int id, int amountOfBeds, decimal pricePerNight)
-    {
-        Id = id;
-        AmountOfBeds = amountOfBeds;
-        PricePerNight = pricePerNight;
-    }
-}

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HotelAPI.Model;
+using System;
 
 public class TestData
 {
