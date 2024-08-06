@@ -31,7 +31,7 @@ namespace HotelAPI
         }
 
         [FunctionName("GetRoomWithID")]
-        public static async Task<IActionResult> GetRoom(
+        public static async Task<IActionResult> GetRoomByID(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
             ILogger log)
         {
