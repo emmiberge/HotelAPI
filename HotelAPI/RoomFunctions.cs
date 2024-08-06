@@ -12,6 +12,8 @@ using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.EntityFrameworkCore;
 using FromBodyAttribute = Microsoft.AspNetCore.Mvc.FromBodyAttribute;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 
 
 
@@ -47,16 +49,20 @@ namespace HotelAPI
 
             int id = int.Parse(req.Query["id"]);
 
-            log.LogInformation("Id :" + id);
+            var rooms = roomService.GetAllRooms();
+            var room = rooms.FirstOrDefault(r => r.ID == id);
 
-            var context = new RoomDbContext();
-            var room = await context.RoomsTestTable.FindAsync(id);
-
-            // Could not find room with id
-            if(room == null)
+            // No room found with id
+            if (room == null)
             {
-                return new NotFoundResult();
+                var response = new Response
+                {
+                    Message = $"Room with ID {id} not found.",
+                    Status = 404
+                };
+                return new NotFoundObjectResult(response);
             }
+
             return new OkObjectResult(room);
 
 
