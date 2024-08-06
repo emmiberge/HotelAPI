@@ -28,13 +28,17 @@ public class RoomDbContext : DbContext
 
 public class Room
 {
-	public int ID { get; set; }
+	public int Id { get; set; }
 	public int AmountOfBeds { get; set; }
     public decimal PricePerNight { get; set; }
 
-    public Room(int iD, int amountOfBeds, decimal pricePerNight)
+    public Room()
     {
-        ID = iD;
+    }
+
+    public Room(int id, int amountOfBeds, decimal pricePerNight)
+    {
+        Id = id;
         AmountOfBeds = amountOfBeds;
         PricePerNight = pricePerNight;
     }

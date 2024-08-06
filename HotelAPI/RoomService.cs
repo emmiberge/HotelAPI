@@ -22,7 +22,42 @@ public class RoomService
     public Room GetRoomById(int id)
     {
         List<Room> rooms = GetAllRooms();
-        return rooms.FirstOrDefault(room => room.ID == id);
+        return rooms.FirstOrDefault(room => room.Id == id);
+    }
+
+    public Response AddRoom(dynamic data)
+    {
+        Room room = new Room
+        {
+            Id = data.Id,
+            AmountOfBeds = data.AmountOfBeds,
+            PricePerNight = data.PricePerNight
+        };
+
+        dbContext.RoomsTestTable.Add(room);
+
+        try
+        {
+            dbContext.SaveChanges();
+            var response = new Response
+            {
+                Message = "Room added successfully",
+                Status = 200
+            };
+            return response;
+        }
+
+        catch (Exception error)
+        {
+            var response = new Response
+            {
+                Message = $"Something went wrong while trying to add room with id {room.Id}: {error.Message}",
+                Status = 500
+            };
+            return response;
+        }
+
+
     }
 
     

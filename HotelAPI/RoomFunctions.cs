@@ -85,11 +85,42 @@ namespace HotelAPI
             context.RoomsTestTable.Remove(room);
             context.SaveChanges();
 
-            return new OkObjectResult("Deleted room with id " + room.ID);
+            return new OkObjectResult("Deleted room with id " + room.Id);
 
         }
 
-      
+        [FunctionName("AddRoom")]
+        public async Task<IActionResult> AddRoom(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
+            ILogger log)
+        {
+            log.LogInformation("C# HTTP trigger function processed a request.");
+
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+
+            if (string.IsNullOrEmpty(requestBody))
+            {
+                return new BadRequestObjectResult("Request body is empty. Please provide valid data.");
+            }
+
+            dynamic data = JsonConvert.DeserializeObject(requestBody);
+
+            
+            // Call service 
+            Response response = roomService.AddRoom(data);
+
+            if(response.Status  == 200)
+            {
+                return new OkObjectResult("Room saved successfully");
+            }
+
+            else
+            {
+                return new BadRequestObjectResult(response.Message);
+            }
+        }
+
+
 
     }
 
