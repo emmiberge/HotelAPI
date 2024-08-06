@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.Reflection.Metadata;
 using Microsoft.EntityFrameworkCore;
 
-public class RoomContext : DbContext
+public class RoomDbContext : DbContext
 {
     public virtual DbSet<Room> RoomsTestTable { get; set; }
 
-    public RoomContext() { }
-    public RoomContext(DbContextOptions<RoomContext> options) { }
+    public RoomDbContext() { }
+    public RoomDbContext(DbContextOptions<RoomDbContext> options) { }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

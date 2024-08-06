@@ -17,23 +17,29 @@ using System.Net.Http;
 
 namespace HotelAPI
 {
-    public static class TestFunction
+    public class RoomFunctions
     {
+        private readonly RoomService roomService;
+
+        public RoomFunctions(RoomService roomService)
+        {
+            this.roomService = roomService;
+        }
+
         [FunctionName("GetAllRooms")]
-        public static async Task<IActionResult> GetAllRooms(
+        public Task<IActionResult> GetAllRooms(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
-            var context = new RoomContext();
-            var rooms = await context.RoomsTestTable.ToListAsync();
-            return new OkObjectResult(rooms);
             
+            var rooms = roomService.GetAllRooms();
+            return Task.FromResult<IActionResult>(new OkObjectResult(rooms));
 
         }
 
         [FunctionName("GetRoomByID")]
-        public static async Task<IActionResult> GetRoomByID(
+        public async Task<IActionResult> GetRoomByID(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
             ILogger log)
         {
@@ -43,7 +49,7 @@ namespace HotelAPI
 
             log.LogInformation("Id :" + id);
 
-            var context = new RoomContext();
+            var context = new RoomDbContext();
             var room = await context.RoomsTestTable.FindAsync(id);
 
             // Could not find room with id
@@ -57,7 +63,7 @@ namespace HotelAPI
         }
 
         [FunctionName("DeleteRoomByID")]
-        public static async Task<IActionResult> DeleteRoomByID(
+        public async Task<IActionResult> DeleteRoomByID(
             [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "delete")] HttpRequest req,
             ILogger log)
         {
@@ -67,7 +73,7 @@ namespace HotelAPI
 
             log.LogInformation("Id :" + id);
 
-            var context = new RoomContext();
+            var context = new RoomDbContext();
             var room = await context.RoomsTestTable.FindAsync(id);
 
             // No room found
