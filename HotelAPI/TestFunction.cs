@@ -17,21 +17,40 @@ namespace HotelAPI
 {
     public static class TestFunction
     {
-        [FunctionName("TestFunction")]
-        public static async Task<IActionResult> Run(
+        [FunctionName("GetAllRooms")]
+        public static async Task<IActionResult> GetAllRooms(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
+            ILogger log)
+        {
+            log.LogInformation("C# HTTP trigger function processed a request.");
+            var db = new RoomContext();
+            var rooms = await db.RoomsTestTable.ToListAsync();
+            return new OkObjectResult(rooms);
+            
+
+        }
+
+        [FunctionName("GetRoomWithID")]
+        public static async Task<IActionResult> GetRoom(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            // default room
-            Room TestRoom = new Room(1, 2, 300.00m);
+            int id = int.Parse(req.Query["id"]);
 
+            log.LogInformation("Id :" + id);
 
             var db = new RoomContext();
-            var rooms = await db.RoomsTestTable.ToListAsync();
-            return new OkObjectResult(rooms);
-            
+            var room = await db.RoomsTestTable.FindAsync(id);
+
+            // Could not find room with id
+            if(room == null)
+            {
+                return new NotFoundResult();
+            }
+            return new OkObjectResult(room);
+
 
         }
     }
