@@ -28,6 +28,17 @@ namespace HotelAPI
             this.roomService = roomService;
         }
 
+        [FunctionName("Ping")]
+        public Task<IActionResult> Ping(
+             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
+             ILogger log)
+        {
+            log.LogInformation("C# HTTP trigger function processed a request.");
+
+            return Task.FromResult<IActionResult>(new OkObjectResult("Pong"));
+
+        }
+
         [FunctionName("GetAllRooms")]
         public Task<IActionResult> GetAllRooms(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
