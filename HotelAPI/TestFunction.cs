@@ -53,6 +53,34 @@ namespace HotelAPI
 
 
         }
+
+        [FunctionName("DeleteRoomByID")]
+        public static async Task<IActionResult> DeleteRoomByID(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "delete")] HttpRequest req,
+            ILogger log)
+        {
+            log.LogInformation("C# HTTP trigger function processed a request.");
+
+            int id = int.Parse(req.Query["id"]);
+
+            log.LogInformation("Id :" + id);
+
+            var context = new RoomContext();
+            var room = await context.RoomsTestTable.FindAsync(id);
+
+            // No room found
+            if (room == null)
+            {
+                return new NotFoundResult();
+            }
+
+            // Delete room
+            context.RoomsTestTable.Remove(room);
+            context.SaveChanges();
+
+            return new OkObjectResult("Deleted room with id " + room.ID);
+
+        }
     }
 
 
