@@ -10,6 +10,8 @@ using Newtonsoft.Json;
 using Microsoft.Azure.Functions.Worker.Extensions.Sql;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.EntityFrameworkCore;
+using FromBodyAttribute = Microsoft.AspNetCore.Mvc.FromBodyAttribute;
+using System.Net.Http;
 
 
 
@@ -23,8 +25,8 @@ namespace HotelAPI
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
-            var db = new RoomContext();
-            var rooms = await db.RoomsTestTable.ToListAsync();
+            var context = new RoomContext();
+            var rooms = await context.RoomsTestTable.ToListAsync();
             return new OkObjectResult(rooms);
             
 
@@ -41,8 +43,8 @@ namespace HotelAPI
 
             log.LogInformation("Id :" + id);
 
-            var db = new RoomContext();
-            var room = await db.RoomsTestTable.FindAsync(id);
+            var context = new RoomContext();
+            var room = await context.RoomsTestTable.FindAsync(id);
 
             // Could not find room with id
             if(room == null)
@@ -81,6 +83,9 @@ namespace HotelAPI
             return new OkObjectResult("Deleted room with id " + room.ID);
 
         }
+
+      
+
     }
 
 
