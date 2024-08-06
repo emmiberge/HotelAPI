@@ -18,30 +18,11 @@ public class RoomService
         
     }
 
-    public Response GetRoomById(int id)
+    // Might use Optional type instead of return null in the future
+    public Room GetRoomById(int id)
     {
         List<Room> rooms = GetAllRooms();
-        var room = rooms.FirstOrDefault(room => room.ID == id);
-
-        // No room found with id
-        if (room == null)
-        {
-            return new Response
-            {
-                Message = $"Room with ID {id} not found.",
-                Status = 404
-            };
-            
-        }
-
-        return new Response
-        {
-            Message = $"Room with ID {id} not found.",
-            Status = 200
-        };
-
-        
-
+        return rooms.FirstOrDefault(room => room.ID == id);
     }
 
     

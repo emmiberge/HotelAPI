@@ -49,18 +49,11 @@ namespace HotelAPI
 
             int id = int.Parse(req.Query["id"]);
 
-            var rooms = roomService.GetAllRooms();
-            var room = rooms.FirstOrDefault(r => r.ID == id);
+            Room room = roomService.GetRoomById(id);
 
-            // No room found with id
-            if (room == null)
+            if(room == null)
             {
-                var response = new Response
-                {
-                    Message = $"Room with ID {id} not found.",
-                    Status = 404
-                };
-                return new NotFoundObjectResult(response);
+                return new NotFoundObjectResult($"Room with id {id} not found");
             }
 
             return new OkObjectResult(room);
