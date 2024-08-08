@@ -8,6 +8,7 @@ using HotelAPI.Model;
 public class RoomDbContext : DbContext
 {
     public virtual DbSet<Room> RoomsTestTable { get; set; }
+    public virtual DbSet<Booking> BookingsTestTable { get; set; }
 
     public RoomDbContext() { }
     public RoomDbContext(DbContextOptions<RoomDbContext> options) { }
@@ -23,6 +24,8 @@ public class RoomDbContext : DbContext
 
         optionsBuilder.UseSqlServer(connectionString);
     }
+
+ 
 
 
 }

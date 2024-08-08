@@ -61,5 +61,55 @@ public class RoomService
 
     }
 
-    
+    public Response AddBooking(dynamic data)
+    {
+
+
+        Booking booking = new Booking
+        {
+            Id = data.Id,
+            RoomId = data.RoomId,
+            CustomerId = data.CustomerId,
+            CheckInDate = data.CheckInDate,
+            CheckOutDate = data.CheckOutDate,
+        };
+
+        dbContext.BookingsTestTable.Add(booking);
+
+        try
+        {
+            dbContext.SaveChanges();
+            var response = new Response
+            {
+                Message = "Booking added successfully",
+                Status = 200
+            };
+            return response;
+        }
+
+        catch (Exception error)
+        {
+            var response = new Response
+            {
+                Message = $"Something went wrong while trying to add booking with id {booking.Id}: {error.Message}",
+                Status = 500
+            };
+            return response;
+        }
+        
+
+
+    }
+
+    public List<Booking> GetAllBookings  () {
+        return dbContext.BookingsTestTable.ToList();
+    }
+
+    public Booking GetBooking (int id)
+    {
+        List<Booking> bookings = GetAllBookings();
+        return bookings.FirstOrDefault(room => room.Id == id);
+    }
+
+
 }

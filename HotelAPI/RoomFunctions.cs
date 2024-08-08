@@ -14,6 +14,7 @@ using FromBodyAttribute = Microsoft.AspNetCore.Mvc.FromBodyAttribute;
 using System.Net.Http;
 using System.Collections.Generic;
 using System.Linq;
+using HotelAPI.Model;
 
 
 
@@ -129,6 +130,65 @@ namespace HotelAPI
             {
                 return new BadRequestObjectResult(response.Message);
             }
+        }
+
+        /*
+        [FunctionName("AddBooking")]
+        public async Task<IActionResult> AddBooking(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
+            ILogger log)
+        {
+            log.LogInformation("C# HTTP trigger function processed a request.");
+
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+
+            if (string.IsNullOrEmpty(requestBody))
+            {
+                return new BadRequestObjectResult("Request body is empty. Please provide valid data.");
+            }
+
+            dynamic data = JsonConvert.DeserializeObject(requestBody);
+
+
+            // Call service 
+            Response response = roomService.AddBooking(data);
+
+            if (response.Status == 200)
+            {
+                return new OkObjectResult("Booking saved successfully");
+            }
+
+            else
+            {
+                return new BadRequestObjectResult(response.Message);
+            }
+        }*/
+
+        [FunctionName("GetBookingById")]
+        public async Task<IActionResult> GetBookingById(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
+            ILogger log)
+        {
+            log.LogInformation("C# HTTP trigger function processed a request.");
+
+            int id = int.Parse(req.Query["id"]);
+
+            Booking booking = roomService.GetBooking(id);
+
+            if (booking == null)
+            {
+                return new NotFoundObjectResult($"Booking with id {id} not found");
+            }
+
+            Room room = roomService.GetRoomById(booking.RoomId);
+
+            Console.WriteLine($"Called for room for booking {booking.Id} which has room id {booking.RoomId}");
+
+            booking.Room = room;
+
+            return new OkObjectResult(booking);
+
+
         }
 
 
