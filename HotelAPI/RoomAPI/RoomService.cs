@@ -26,6 +26,8 @@ public class RoomService
         return rooms.FirstOrDefault(room => room.Id == id);
     }
 
+    
+
     public Response AddRoom(dynamic data)
     {
         Room room = new Room
@@ -61,44 +63,64 @@ public class RoomService
 
     }
 
-    public Response AddBooking(dynamic data)
+ 
+    public Response MakeReservation(dynamic data)
     {
+        int id = data.Id;
+        int roomId = data.RoomId;
+        int customerId = data.CustomerId;
+        DateTime checkInDate = data.CheckInDate;
+        DateTime checkOutDate = data.CheckOutDate;
 
+        Console.WriteLine($"ID: {id}");
+        Console.WriteLine($"RoomID: {roomId}");
+        Console.WriteLine($"Check in: {checkInDate}");
+        Console.WriteLine($"Check out: {checkOutDate}");
 
         Booking booking = new Booking
         {
-            Id = data.Id,
-            RoomId = data.RoomId,
-            CustomerId = data.CustomerId,
-            CheckInDate = data.CheckInDate,
-            CheckOutDate = data.CheckOutDate,
+            Id = id,
+            RoomId = roomId,
+            CustomerId = customerId,
+            CheckInDate = checkInDate,
+            CheckOutDate = checkOutDate,
         };
 
-        dbContext.BookingsTestTable.Add(booking);
-
-        try
+        // Check if Id already exists
+        if(GetAllBookings().Select(b => b.Id).Contains(booking.Id))
         {
-            dbContext.SaveChanges();
-            var response = new Response
+            return new Response
             {
-                Message = "Booking added successfully",
+                Message = "There is already a reservation with the same id",
+                Status = 404
+            };
+        }
+
+        // Check if room is available between the selected dates
+        if(ValidateReservation(roomId, checkInDate, checkOutDate))
+        {
+            dbContext.BookingsTestTable.Add(booking);
+            dbContext.SaveChanges();
+            return new Response
+            {
+                Message = "Reservation confirmed",
                 Status = 200
             };
-            return response;
         }
 
-        catch (Exception error)
+        return new Response
         {
-            var response = new Response
-            {
-                Message = $"Something went wrong while trying to add booking with id {booking.Id}: {error.Message}",
-                Status = 500
-            };
-            return response;
-        }
-        
+            Message = "Room is unavailable between the selected dates.",
+            Status = 404
+        };
 
 
+    }
+
+    public bool ValidateReservation(int roomId, DateTime startDate, DateTime endDate)
+    {
+        List<int> availableRooms = GetAvailableRooms(startDate, endDate);
+        return availableRooms.Contains(roomId);
     }
 
     public List<Booking> GetAllBookings  () {

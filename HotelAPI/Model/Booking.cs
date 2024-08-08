@@ -14,8 +14,6 @@ namespace HotelAPI.Model
         public DateTime CheckInDate { get; set; }
         public DateTime CheckOutDate { get; set; }
 
-        public Room Room { get; set; } = null!;
-
         public Booking()
         {
         }

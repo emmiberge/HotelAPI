@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using HotelAPI.Model;
 using Microsoft.IdentityModel.Tokens;
+using System.Web.Http;
 
 
 
@@ -85,8 +86,6 @@ namespace HotelAPI.BookingAPI
 
             Console.WriteLine($"Called for room for booking {booking.Id} which has room id {booking.RoomId}");
 
-            booking.Room = room;
-
             return new OkObjectResult(booking);
 
 
@@ -121,6 +120,48 @@ namespace HotelAPI.BookingAPI
 
 
         }
+
+        [FunctionName("MakeReservation")]
+        public async Task<IActionResult> MakeReservation(
+           [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
+           ILogger log)
+        {
+            log.LogInformation("C# HTTP trigger function processed a request.");
+
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+
+            if (string.IsNullOrEmpty(requestBody))
+            {
+                return new BadRequestObjectResult("Request body is empty. Please provide valid data.");
+            }
+
+            dynamic data = JsonConvert.DeserializeObject(requestBody);
+
+            Console.WriteLine(data.ToString());
+
+
+            
+            Response response = roomService.MakeReservation(data);
+
+            if (response.Status == 404)
+            {
+                return new BadRequestObjectResult(response.Message);
+            }
+
+            else if (response.Status == 200)
+            {
+                return new OkObjectResult(response.Message);
+            }
+
+            else 
+            {
+                return new InternalServerErrorResult();
+            }
+
+            
+        }
+
+
 
 
 
