@@ -15,6 +15,7 @@ using System.Net.Http;
 using System.Collections.Generic;
 using System.Linq;
 using HotelAPI.Model;
+using Microsoft.IdentityModel.Tokens;
 
 
 
@@ -62,6 +63,8 @@ namespace HotelAPI.BookingAPI
             }
         }*/
 
+
+
         [FunctionName("GetBookingById")]
         public async Task<IActionResult> GetBookingById(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
@@ -85,6 +88,36 @@ namespace HotelAPI.BookingAPI
             booking.Room = room;
 
             return new OkObjectResult(booking);
+
+
+        }
+
+
+        [FunctionName("CheckAvailableRoomsForTimeRange")]
+        public async Task<IActionResult> CheckAvailableRoomsForTimeRange(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
+            ILogger log)
+        {
+            log.LogInformation("C# HTTP trigger function processed a request.");
+
+            DateTime startDate = DateTime.Parse(req.Query["start"]);
+            DateTime endDate = DateTime.Parse(req.Query["end"]);
+
+            if(endDate <= startDate)
+            {
+                return new BadRequestObjectResult("Start date is after or same as end date");
+            }
+
+            List<int> availableRooms = roomService.GetAvailableRooms(startDate, endDate);
+
+            if (availableRooms.IsNullOrEmpty())
+            {
+                return new OkObjectResult("No bookings available for the selected date.");
+            }
+
+            
+
+            return new OkObjectResult(availableRooms);
 
 
         }

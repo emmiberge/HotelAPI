@@ -111,5 +111,11 @@ public class RoomService
         return bookings.FirstOrDefault(room => room.Id == id);
     }
 
-
+    // Note: This only returns the list of available rooms by their id
+    internal List<int> GetAvailableRooms(DateTime startDate, DateTime endDate)
+    { 
+        List<int> unAvailableRooms = dbContext.BookingsTestTable.Where(b => b.CheckInDate < endDate && b.CheckOutDate > startDate).Select(b => b.RoomId).ToList();
+        List<int> allRooms = dbContext.RoomsTestTable.Select(r => r.Id).ToList();
+        return allRooms.Where(r => !unAvailableRooms.Contains(r)).ToList();
+    }
 }
