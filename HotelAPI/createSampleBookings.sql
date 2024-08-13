@@ -1,11 +1,12 @@
 ﻿DROP TABLE BookingsTestTable;
 
-CREATE TABLE BookingsTestTable (
-	ID int PRIMARY KEY,
+CREATE TABLE Bookings (
+	Id uniqueidentifier PRIMARY KEY DEFAULT NEWID(),
 	RoomID int,
 	CustomerID int,
 	CheckInDate Date,
-	CheckOutDate Date
+	CheckOutDate Date,
+	FOREIGN KEY (RoomId) REFERENCES Rooms(RoomId),
 );
 
 INSERT INTO BookingsTestTable VALUES (1,1,100,'2024-03-03','2024-03-05');
