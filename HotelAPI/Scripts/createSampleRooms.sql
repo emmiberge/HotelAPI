@@ -1,11 +1,4 @@
-﻿DROP TABLE RoomsTestTable;
-
-CREATE TABLE RoomsTestTable (
-	ID int PRIMARY KEY,
-	AmountOfBeds int NOT NULL,
-	PricePerNight decimal(10,2)
-);
-
+﻿---- DUMMY DATA ----
 
 INSERT INTO Rooms VALUES (NEWID(),'Double bedroom', 'A beautiful room with view of the ocean', 2, 'King size bed');
 INSERT INTO Rooms VALUES (NEWID(),'Single bedroom', 'A small but cosy apartment', 1, 'Single bed');
@@ -98,34 +91,3 @@ CREATE TABLE HotelRooms(
 
 
 
--------------- STORED PROCEDURES -------------------
-CREATE PROCEDURE SelectAllFeaturesForRoom (@Room uniqueidentifier)
-AS
-
-BEGIN
-
--- Find hotel id
-DECLARE @Hotel uniqueidentifier;
-SELECT @Hotel = HotelId FROM HotelRooms WHERE RoomId = @Room;
-
--- Feature for this room (incluing the features of its hotel)
-WITH FeatureIds AS (
-    (SELECT FeatureId FROM [dbo].[HotelFeatures] WHERE HotelId = @Hotel)
-	UNION ALL
-	(SELECT FeatureId FROM [dbo].[RoomFeatures] WHERE RoomId = @Room)
-)
-
-
--- Get details about features
-SELECT DISTINCT FeatureDescription, CategoryName, Priority
-FROM FeatureIds 
-INNER JOIN(
-	SELECT FeatureId, FeatureDescription, CategoryName, Priority  -- Pick out Category name instead of ID
-	FROM [dbo].[Features] AS F
-	INNER JOIN [dbo].[Categorys] AS C ON F.CategoryId = C.CategoryId
-) AS Info ON FeatureIds.FeatureId = Info.FeatureId;
-	  
-END
-
-
-DROP PROCEDURE SelectAllFeaturesForRoom;
